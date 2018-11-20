@@ -20,13 +20,13 @@ const RouteGuest = () => (
         </li>
 
         <li className="nav-item">
-          <Link to="/login" className="nav-link">
+          <Link to="/account/signin" className="nav-link">
             Sign in
           </Link>
         </li>
 
         <li className="nav-item">
-          <Link to="/register" className="nav-link">
+          <Link to="/account/signup" className="nav-link">
             Sign up
           </Link>
         </li>
@@ -47,20 +47,20 @@ const RouteLogged: React.SFC<PropsHeader> = ({ user }: PropsHeader) => {
           </li>
 
           <li className="nav-item">
-            <Link to="/editor" className="nav-link">
+            <Link to="/account/editor" className="nav-link">
               <i className="ion-compose"></i>&nbsp;New Post
               </Link>
           </li>
 
           <li className="nav-item">
-            <Link to="/settings" className="nav-link">
+            <Link to="/account/settings" className="nav-link">
               <i className="ion-gear-a"></i>&nbsp;Settings
               </Link>
           </li>
 
           <li className="nav-item">
             <Link
-              to={`/@${user.username}`}
+              to={`/account/profile/${user.username}`}
               className="nav-link">
               {user.username}
             </Link>

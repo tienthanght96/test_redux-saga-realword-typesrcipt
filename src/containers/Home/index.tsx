@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import ContentLoader from 'react-content-loader';
 import ArticleInterface from '../../interfaces/ArticleInterface';
 import TagItem from '../../interfaces/TagItem';
-import { FETCH_ARTICLE_HOME_PAGE, FETCH_TAGS_HOME_PAGE, UPDATE_TAB_ARTICLES_HOME_PAGE, UPDATING_PAGINATION_ARTICLES_HOME_PAGE } from '../../constants';
+import {
+  FETCH_ARTICLE_HOME_PAGE, FETCH_TAGS_HOME_PAGE,
+  UPDATE_TAB_ARTICLES_HOME_PAGE,
+  UPDATING_PAGINATION_ARTICLES_HOME_PAGE
+} from '../../constants';
 import AppState from '../../interfaces/AppState';
 import {
   articlesSelector, tagsSelector, fetchArticlesStatusSelector,
@@ -49,11 +54,14 @@ class HomeContainer extends React.Component<Props> {
   }
 
   pageClickHandler = (page: number) => {
-    const { currentPage } = this.props.paramsArticles;
-    if(page !== currentPage){
-      const paramsArticles = { offset: page  * 20, limit: 20, currentPage: page }
-      this.props.updateParamsArticles(paramsArticles);
-    }
+    window.scrollTo(0, 0);
+    setTimeout(() => {
+      const { currentPage } = this.props.paramsArticles;
+      if(page !== currentPage){
+        const paramsArticles = { offset: page  * 20, limit: 20, currentPage: page }
+        this.props.updateParamsArticles(paramsArticles);
+      }
+    }, 300)
   }
   
   render() {
@@ -74,7 +82,33 @@ class HomeContainer extends React.Component<Props> {
               onClickTab={this.tabClickHandler}
             />
             { isFetchingArticles
-              ? <div><br />Loading articles....</div>
+              ? <div>
+                  <br />
+                  { Array.from(Array(10).keys()).map((item) => {
+                      return (
+                        <ContentLoader 
+                          height={160}
+                          width={400}
+                          speed={2}
+                          primaryColor="#f3f3f3"
+                          secondaryColor="#ecebeb"
+                          style={{ width: '100%' }}
+                          key={item}
+                        >
+                          <rect x="70" y="15" rx="4" ry="4" width="117" height="6.4" /> 
+                          <rect x="70" y="35" rx="3" ry="3" width="85" height="6.4" /> 
+                          <rect x="0" y="80" rx="3" ry="3" width="350" height="6.4" /> 
+                          <rect x="0" y="100" rx="3" ry="3" width="380" height="6.4" /> 
+                          <rect x="0" y="120" rx="3" ry="3" width="201" height="6.4" /> 
+                          <rect x="36.8" y="50.67" rx="0" ry="0" width="0" height="0" /> 
+                          <rect x="2.8" y="2.67" rx="0" ry="0" width="58.24" height="62.4" /> 
+                          <rect x="223.8" y="62.67" rx="0" ry="0" width="0" height="0" /> 
+                          <rect x="15.8" y="38.67" rx="0" ry="0" width="0" height="0" />
+                        </ContentLoader>
+                      )
+                    })
+                  }
+                </div>
               : <div>
                   <ArticleList articles={articles} />
                   { currentTab !== 'feed' &&

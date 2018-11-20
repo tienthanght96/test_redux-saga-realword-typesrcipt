@@ -3,27 +3,36 @@ import { APP_LOADED, FETCHING_ARTICLE_HOME_PAGE, FETCH_ARTICLE_HOME_PAGE, FETCHE
 import axios from 'axios';
 import { setStatusFetch } from '../actions/homeActions';
 import { articlesTabSelector, articlesParamsSelector } from '../selector/homeSelector';
+import { appSelector } from '../selector/globalSelector';
+import { getAuthHeader } from '../utils';
 
 
 // fetch articles
-function fetchArticles(url: string, params: any) {
+function fetchArticles(url: string, params: any, isHaveToken?: boolean) {
   return axios({
+    headers: isHaveToken ? getAuthHeader() : { Accept: 'application/json' },
     method: "get",
     url,
-    params
+    params,
   });
 }
 
 function* fetchListArticlesHomePage(){
-  // yield take(APP_LOADED);
+  
+  const isLoadingApp = yield select(appSelector);
+  if(isLoadingApp){
+    yield take(APP_LOADED);
+  }
   const currentTab = yield select(articlesTabSelector);
   const params = yield select(articlesParamsSelector);
   let url = `${process.env.REACT_APP_API_URL}articles`;
-  
+  let isHaveToken = false;
   yield put(setStatusFetch(FETCHING_ARTICLE_HOME_PAGE));
   
   if(currentTab === 'feed'){
-    url = `${process.env.REACT_APP_API_URL}feed`;
+    // https://conduit.productionready.io/api/articles/feed?limit=10&offset=0
+    url = `${process.env.REACT_APP_API_URL}articles/feed`;
+    isHaveToken = true;
   }
 
   if(currentTab !== 'feed' && currentTab !== 'global'){
@@ -32,11 +41,13 @@ function* fetchListArticlesHomePage(){
 
   const queryParams = {...params};
   delete queryParams.currentPage;
-
+  console.log(queryParams, url);
   try {
-    const { data } = yield call(fetchArticles, url, queryParams);
+    const { data } = yield call(fetchArticles, url, queryParams, isHaveToken);
+    console.log('data',data)
     yield put(setStatusFetch(FETCHED_ARTICLE_HOME_PAGE, data ));
   } catch (error) {
+    console.log('error', error)
     yield put(setStatusFetch(FETCHED_ARTICLE_HOME_PAGE ));
   }
 }
@@ -49,7 +60,10 @@ function* watchFetchListArticles(){
 
 // fetch tags
 function* fetchTagsHomePage(){
-  yield take(APP_LOADED);
+  const isLoadingApp = yield select(appSelector);
+  if(isLoadingApp){
+    yield take(APP_LOADED);
+  }
   yield put(setStatusFetch(FETCHING_TAGS_LIST));
   const url = `${process.env.REACT_APP_API_URL}/tags`;
   try {

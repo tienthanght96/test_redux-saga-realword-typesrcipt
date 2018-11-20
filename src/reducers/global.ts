@@ -1,4 +1,4 @@
-import { APP_LOADED, APP_LOADING } from '../constants';
+import { APP_LOADED, APP_LOADING, USER_LOGINED_REGISTERED } from '../constants';
 import { GlobalState } from '../interfaces/GlobalState';
 
 const initGlobalState: GlobalState = {
@@ -20,7 +20,11 @@ const GlobalReducer = (state: GlobalState = initGlobalState, action: any) => {
         isLoadingApp: true,
       };
     }
+
+    case USER_LOGINED_REGISTERED:
+
     case APP_LOADED: {
+      console.log('actions', action)
       return { 
         ...state,
         isLoadingApp: false,

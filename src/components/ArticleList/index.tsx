@@ -14,7 +14,7 @@ class ArticleList extends React.Component<Props>{
   render() {
     const { articles } = this.props;
     
-    if(articles.length < 1) return null;
+    if(articles.length < 1) return <div className="article-preview">No articles are here... yet.</div>;
 
     return articles.map(article => <ArticleCard key={article.slug} article={article} />) ;
   }
